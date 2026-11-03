@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#f4f2ee" />
   <link rel="preload" href="fonts/HelveticaNeueLight.otf" as="font" type="font/otf" crossorigin />
   <link rel="preload" href="fonts/HelveticaNeueRoman.otf" as="font" type="font/otf" crossorigin />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=5" />
 </head>
 <body>
 
@@ -57,6 +57,7 @@
         <form class="form reveal" id="betaForm" novalidate>
           <label for="email" class="sr-only">Email address</label>
           <input id="email" name="email" type="email" placeholder="Email address" autocomplete="email" required />
+          <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none" />
           <button type="submit" class="btn">Join the beta</button>
         </form>
         <p class="form__msg" id="formMsg" role="status" aria-live="polite"></p>

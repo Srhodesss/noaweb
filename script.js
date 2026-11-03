@@ -51,21 +51,52 @@
     }, { passive: true });
   }
 
-  /* ---------- Beta form (front-end only — wire to your waitlist service) ---------- */
+  /* ---------- Beta form: emails each signup to the team via FormSubmit ---------- */
+  // The first live submission sends an activation email to this inbox; signups
+  // are only forwarded once that link is clicked.
+  const WAITLIST_ENDPOINT = "https://formsubmit.co/ajax/info@noawearable.com";
   const form = document.getElementById("betaForm");
   const msg = document.getElementById("formMsg");
   if (form) {
-    form.addEventListener("submit", (e) => {
+    const button = form.querySelector("button[type=submit]");
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
+      if (form.classList.contains("is-sending")) return;
       const email = form.email.value.trim();
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         msg.textContent = "Please enter a valid email address.";
         form.email.focus();
         return;
       }
-      // TODO: POST `email` to your waitlist endpoint (Formspree, Loops, Mailchimp, Supabase…).
-      form.classList.add("is-done");
-      msg.textContent = "You're on the list. We'll be in touch before beta opens.";
+      // Honeypot: bots fill every field, people never see this one
+      if (form._honey && form._honey.value) return;
+
+      form.classList.add("is-sending");
+      button.disabled = true;
+      msg.textContent = "Adding you to the list…";
+      try {
+        const res = await fetch(WAITLIST_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({
+            email,
+            _subject: "New Noa beta waitlist signup",
+            _template: "table",
+            _replyto: email,
+            message: `${email} just joined the Noa beta waitlist.`,
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || String(data.success) === "false") throw new Error(data.message || res.status);
+        form.classList.add("is-done");
+        msg.textContent = "You're on the list. We'll be in touch before beta opens.";
+      } catch (err) {
+        console.error("Waitlist signup failed:", err);
+        msg.textContent = "Something went wrong. Please try again in a moment.";
+        button.disabled = false;
+      } finally {
+        form.classList.remove("is-sending");
+      }
     });
   }
 })();
