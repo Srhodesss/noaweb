@@ -35,18 +35,20 @@
   /* ---------- Gradient field drifts gently with the cursor ---------- */
   const field = document.querySelector(".field");
   if (field && !reduceMotion && window.matchMedia("(pointer: fine)").matches) {
-    let tx = 0, ty = 0, cx = 0, cy = 0;
-    window.addEventListener("pointermove", (e) => {
-      tx = (e.clientX / window.innerWidth - 0.5) * 50;
-      ty = (e.clientY / window.innerHeight - 0.5) * 50;
-    });
+    let tx = 0, ty = 0, cx = 0, cy = 0, running = false;
+    // Only animate while the field is still catching up to the cursor
     const loop = () => {
       cx += (tx - cx) * 0.04;
       cy += (ty - cy) * 0.04;
       field.style.transform = `translate3d(${cx}px, ${cy}px, 0)`;
-      requestAnimationFrame(loop);
+      if (Math.abs(tx - cx) > 0.05 || Math.abs(ty - cy) > 0.05) requestAnimationFrame(loop);
+      else running = false;
     };
-    loop();
+    window.addEventListener("pointermove", (e) => {
+      tx = (e.clientX / window.innerWidth - 0.5) * 50;
+      ty = (e.clientY / window.innerHeight - 0.5) * 50;
+      if (!running) { running = true; requestAnimationFrame(loop); }
+    }, { passive: true });
   }
 
   /* ---------- Beta form (front-end only — wire to your waitlist service) ---------- */
