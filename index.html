@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Noa — Recovery & readiness, read from the ear</title>
+  <meta name="description" content="Noa is a non-invasive ear-worn wearable that uses machine learning to predict recovery and readiness by combining brain and body signals. Built first for elite sport. Beta Q2 2027." />
+  <meta name="theme-color" content="#f4f2ee" />
+  <link rel="preload" href="fonts/HelveticaNeueLight.otf" as="font" type="font/otf" crossorigin />
+  <link rel="preload" href="fonts/HelveticaNeueRoman.otf" as="font" type="font/otf" crossorigin />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Soft gradient field (two soft colours only) -->
+  <div class="field" aria-hidden="true">
+    <!--
+      Optional: swap the gradient for a slow, muted loop.
+      <video class="field__video" autoplay muted loop playsinline poster="poster.jpg">
+        <source src="hero.mp4" type="video/mp4" />
+      </video>
+    -->
+    <div class="orb orb--a"></div>
+    <div class="orb orb--b"></div>
+    <div class="orb orb--c"></div>
+    <div class="orb orb--d"></div>
+  </div>
+
+  <!-- Liquid-glass layer: soft frosted panes that slowly morph over the gradient -->
+  <div class="glass" aria-hidden="true">
+    <div class="pane pane--1"></div>
+    <div class="pane pane--2"></div>
+    <div class="pane pane--3"></div>
+  </div>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav">
+    <a href="#top" class="logo" aria-label="Noa home">noa</a>
+    <span class="pill"><i></i>Beta · Q2 2027</span>
+  </header>
+
+  <main id="top">
+
+    <!-- ============ SCREEN 1 — HERO ============ -->
+    <section class="hero">
+      <div class="hero__inner">
+        <p class="hero__team reveal"><span>Built by 6 engineers at <strong>Imperial College London</strong></span></p>
+        <h1 class="hero__title reveal">Know when<br />you're <em>ready.</em></h1>
+
+        <p class="hero__sub reveal">
+          A non-invasive ear-worn wearable that reads brain and body,
+          using machine learning to predict recovery and readiness.
+        </p>
+
+        <form class="form reveal" id="betaForm" novalidate>
+          <label for="email" class="sr-only">Email address</label>
+          <input id="email" name="email" type="email" placeholder="Email address" autocomplete="email" required />
+          <button type="submit" class="btn">Join the beta</button>
+        </form>
+        <p class="form__msg" id="formMsg" role="status" aria-live="polite"></p>
+      </div>
+
+      <a href="#tech" class="hero__more reveal" aria-label="Scroll to technology">
+        <span>Scroll</span>
+        <span class="arrow">↓</span>
+      </a>
+    </section>
+
+    <!-- ============ SCREEN 2 — WHY + TECH + TEAM ============ -->
+    <section class="tech" id="tech">
+
+      <p class="why reveal">
+        Your body tells you how hard you trained. Your brain tells you how well you recovered.
+        <span>Until now, nothing listened to both.</span>
+      </p>
+
+      <p class="label reveal">The technology</p>
+      <div class="cols">
+        <article class="col reveal">
+          <span class="col__tag">Brain</span>
+          <h2 class="col__title">EEG</h2>
+          <p>Brain activity, read from the ear.</p>
+        </article>
+        <article class="col reveal">
+          <span class="col__tag">Brain + body</span>
+          <h2 class="col__title">fNIRS<span class="plus">+</span>PPG</h2>
+          <p>Brain oxygenation, heart rate and HRV.</p>
+        </article>
+        <article class="col reveal">
+          <span class="col__tag">Prediction</span>
+          <h2 class="col__title">ML</h2>
+          <p>One daily readiness score, personal to you.</p>
+        </article>
+      </div>
+
+      <p class="tagline reveal">
+        Built for athletes, coaches and clubs
+        <span>where performance is key.</span>
+      </p>
+    </section>
+
+    <!-- ============ SCREEN 3 — FAQ + BACKERS ============ -->
+    <section class="end" id="faq">
+      <div class="faq">
+        <h2 class="faq__title reveal">Questions</h2>
+        <div class="faq__list">
+          <details class="reveal">
+            <summary>When can I get one?</summary>
+            <p>The private beta opens in Q2 2027 for a small group of teams and athletes.</p>
+          </details>
+          <details class="reveal">
+            <summary>What does it measure?</summary>
+            <p>Brain activity (EEG), brain oxygenation (fNIRS), and heart rate and HRV (PPG).</p>
+          </details>
+          <details class="reveal">
+            <summary>Is it comfortable to wear?</summary>
+            <p>It's designed to sit in/around the ear like an earbud. No straps, no headset.</p>
+          </details>
+          <details class="reveal">
+            <summary>How do I join the beta?</summary>
+            <p>Leave your email at the top of the page. We'll be in touch before launch.</p>
+          </details>
+        </div>
+      </div>
+
+      <footer class="foot reveal">
+        <span class="logo">noa</span>
+        <p class="foot__meta">
+          <a href="mailto:info@noawearable.com"> info@noawearable.com </a>
+          <span>© <span id="year"></span> Noa</span>
+        </p>
+      </footer>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
