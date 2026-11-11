@@ -51,48 +51,97 @@
     }, { passive: true });
   }
 
-  /* ---------- Beta form: emails each signup to the team via FormSubmit ---------- */
-  // The first live submission sends an activation email to this inbox; signups
-  // are only forwarded once that link is clicked.
-  const WAITLIST_ENDPOINT = "https://formsubmit.co/ajax/info@noawearable.com";
+  /* ---------- Register interest ---------- */
+  // Posts to our own Vercel function (api/waitlist.js), which validates the
+  // signup and stores it in the team Google Sheet.
+  //
+  // SURVEY_URL: paste the Tally survey link here once School ethics sign-off is
+  // in. Leave it empty and the survey button stays hidden.
+  const SURVEY_URL = "";
+  const ENDPOINT = "/api/waitlist";
+
+  const params = new URLSearchParams(window.location.search);
+  const pick = (key) => (params.get(key) || "").slice(0, 100);
+  // Where the visitor came from: UTM tags on links and ads, ?ref= on venue QR codes
+  const source = {
+    utm_source: pick("utm_source"),
+    utm_medium: pick("utm_medium"),
+    utm_campaign: pick("utm_campaign"),
+    ref: pick("ref"),
+  };
+
   const form = document.getElementById("betaForm");
   const msg = document.getElementById("formMsg");
+  const thanks = document.getElementById("thanks");
+  const surveyLink = document.getElementById("surveyLink");
+
   if (form) {
     const button = form.querySelector("button[type=submit]");
+    const roles = ["athlete", "coach", "both"];
+
+    // Pre-select the role when arriving from the survey (?role=athlete)
+    const presetRole = params.get("role");
+    if (roles.includes(presetRole)) {
+      const radio = form.querySelector(`input[name=role][value=${presetRole}]`);
+      if (radio) radio.checked = true;
+    }
+
+    const fail = (text, el) => {
+      msg.textContent = text;
+      msg.classList.add("is-error");
+      if (el) el.focus();
+    };
+
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       if (form.classList.contains("is-sending")) return;
+      msg.classList.remove("is-error");
+
       const email = form.email.value.trim();
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        msg.textContent = "Please enter a valid email address.";
-        form.email.focus();
-        return;
-      }
-      // Honeypot: bots fill every field, people never see this one
-      if (form._honey && form._honey.value) return;
+      const roleInput = form.querySelector("input[name=role]:checked");
+      const role = roleInput ? roleInput.value : "";
+
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return fail("Please enter a valid email address.", form.email);
+      if (!role) return fail("Please choose athlete, coach or both.", form.querySelector("input[name=role]"));
+      if (!form.consent.checked) return fail("Please tick the box so we can email you updates.", form.consent);
 
       form.classList.add("is-sending");
       button.disabled = true;
       msg.textContent = "Adding you to the list…";
+
       try {
-        const res = await fetch(WAITLIST_ENDPOINT, {
+        const res = await fetch(ENDPOINT, {
           method: "POST",
           headers: { "Content-Type": "application/json", Accept: "application/json" },
           body: JSON.stringify({
             email,
-            _subject: "New Noa beta waitlist signup",
-            _template: "table",
-            _replyto: email,
-            message: `${email} just joined the Noa beta waitlist.`,
+            role,
+            consent: true,
+            company: form.company.value, // honeypot
+            page: window.location.pathname,
+            ...source,
           }),
         });
         const data = await res.json().catch(() => ({}));
-        if (!res.ok || String(data.success) === "false") throw new Error(data.message || res.status);
-        form.classList.add("is-done");
-        msg.textContent = "You're on the list. We'll be in touch before beta opens.";
+        if (!res.ok || !data.ok) throw new Error(data.error || `HTTP ${res.status}`);
+
+        form.hidden = true;
+        thanks.hidden = false;
+        msg.textContent = "";
+        if (data.duplicate) {
+          thanks.querySelector(".thanks__title").textContent = "You're already on the list.";
+        }
+        if (SURVEY_URL) {
+          const url = new URL(SURVEY_URL);
+          url.searchParams.set("src", "waitlist");
+          url.searchParams.set("role", role);
+          surveyLink.href = url.toString();
+          surveyLink.hidden = false;
+        }
+        thanks.focus();
       } catch (err) {
-        console.error("Waitlist signup failed:", err);
-        msg.textContent = "Something went wrong. Please try again in a moment.";
+        console.error("Signup failed:", err);
+        fail("Something went wrong. Please try again, or email info@noawearable.com.");
         button.disabled = false;
       } finally {
         form.classList.remove("is-sending");

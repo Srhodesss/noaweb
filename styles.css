@@ -44,6 +44,7 @@ body {
 }
 a { color: inherit; text-decoration: none; }
 ::selection { background: var(--signal); color: #fff; }
+[hidden] { display: none !important; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* Film grain: warm sepia specks on a transparent base, multiplied into the
@@ -260,6 +261,47 @@ a { color: inherit; text-decoration: none; }
 .btn:hover { background: var(--signal); transform: translateY(-1px); }
 
 .form__msg { margin-top: 14px; font-size: 14px; color: var(--ink-2); min-height: 21px; padding-left: 20px; }
+.form__msg.is-error { color: var(--signal-ink); }
+
+/* Register interest: role toggle, consent, thank-you */
+.signup { max-width: 460px; }
+.choice {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+  border: 0; margin-top: 14px; padding-left: 20px;
+}
+.choice legend { float: left; margin-right: 6px; font-size: 14px; color: var(--ink-2); }
+.choice label { position: relative; cursor: pointer; }
+.choice input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.choice span {
+  display: inline-block; padding: 7px 14px; border-radius: 999px;
+  font-size: 14px; color: var(--ink);
+  background: rgba(255, 255, 255, 0.55); border: 1px solid var(--line);
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.choice label:hover span { border-color: rgba(20, 20, 20, 0.3); }
+.choice input:checked + span { background: var(--ink); border-color: var(--ink); color: #fff; }
+.choice input:focus-visible + span { box-shadow: 0 0 0 3px rgba(226, 84, 43, 0.35); }
+
+.consent {
+  display: flex; gap: 10px; align-items: flex-start;
+  margin-top: 12px; padding-left: 20px;
+  font-size: 13px; line-height: 1.45; color: var(--ink-2); cursor: pointer;
+}
+.consent input { margin-top: 2px; width: 16px; height: 16px; flex: none; accent-color: var(--signal); }
+.consent a { text-decoration: underline; text-underline-offset: 2px; }
+
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+.thanks {
+  padding: 22px 24px; border-radius: 24px; outline: none;
+  background: rgba(255, 255, 255, 0.6); border: 1px solid rgba(255, 255, 255, 0.9);
+}
+.thanks__title { font-size: 20px; font-weight: 500; }
+.thanks__text { margin-top: 4px; font-size: 15px; color: var(--ink-2); }
+.thanks .btn { display: inline-flex; align-items: center; margin-top: 16px; }
+.btn--ghost { background: var(--ink); color: #fff; }
+.btn--ghost:hover { background: var(--signal); color: var(--ink); }
+.faq a { text-decoration: underline; text-underline-offset: 2px; }
 
 .hero__more {
   position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%);
@@ -406,6 +448,7 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 520px) {
   .form { flex-direction: column; border-radius: 24px; padding: 8px; }
   .form input { height: 46px; }
+  .choice, .consent, .form__msg { padding-left: 4px; }
   .hero__more { display: none; }
   .foot { flex-direction: column; align-items: flex-start; }
 }
