@@ -86,6 +86,20 @@
       if (radio) radio.checked = true;
     }
 
+    // Keep "Register interest" inactive until email, role and consent are all filled in
+    const isValid = () =>
+      /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(form.email.value.trim()) &&
+      !!form.querySelector("input[name=role]:checked") &&
+      form.consent.checked;
+    const updateButton = () => {
+      if (form.classList.contains("is-sending")) return;
+      button.disabled = !isValid();
+      if (!button.disabled) msg.classList.remove("is-error");
+    };
+    form.addEventListener("input", updateButton);
+    form.addEventListener("change", updateButton);
+    updateButton();
+
     const fail = (text, el) => {
       msg.textContent = text;
       msg.classList.add("is-error");
@@ -142,9 +156,9 @@
       } catch (err) {
         console.error("Signup failed:", err);
         fail("Something went wrong. Please try again, or email info@noawearable.com.");
-        button.disabled = false;
       } finally {
         form.classList.remove("is-sending");
+        updateButton();
       }
     });
   }
