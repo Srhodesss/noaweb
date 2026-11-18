@@ -1,0 +1,57 @@
+/* Noa: Tally survey backdrop ("Help us understand how you train")
+   Paste into Tally: Form settings > Customise > Custom CSS (needs Tally Pro).
+
+   Before pasting, upload the PNGs somewhere public and replace the two
+   URLs below. Tally has no asset upload for custom CSS, so host them on the
+   site (for example noawearable.com/brand/tally/) or any image host.
+
+   Mobile: the backdrop image. Desktop: a plain mineral grey.
+   Deliberately no background-attachment: fixed, which iOS Safari ignores. */
+
+:root {
+  --noa-bg: #E9EBEA;      /* mineral grey, the backdrop's flat colour */
+  --noa-ink: #141414;     /* site --ink */
+  --noa-accent: #E2542B;  /* site --signal, the stripe colour */
+}
+
+/* Desktop and tablets: plain background, no image */
+body {
+  background-color: var(--noa-bg);
+}
+
+/* Phones */
+@media (max-width: 767px) {
+  body {
+    background-color: var(--noa-bg);
+    background-image: url("https://YOUR-HOST/noa-tally-backdrop-bottom-1080x2340.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center top;
+  }
+}
+
+/* Larger phones (430 CSS px wide, e.g. Pro Max): the sharper 1290 x 2796 file */
+@media (min-width: 400px) and (max-width: 767px) {
+  body {
+    background-image: url("https://YOUR-HOST/noa-tally-backdrop-bottom-1290x2796.png");
+  }
+}
+
+/* Button colour to match the stripes. Prefer setting this in Tally's theme
+   editor (button colour #E2542B, button text #141414). White text on this
+   orange fails WCAG AA (3.79:1); the site's dark ink passes (4.86:1).
+   If you'd rather do it here, Tally's button class names aren't documented,
+   so inspect the live form and target its submit button. */
+
+/* Note on scrolling: with background-size: cover on body, the image covers
+   the whole page height. On a long question page the image stretches to the
+   content height, so the stripe sits at the end of the content rather than
+   the bottom of the screen, and the sides crop slightly. Most single-question
+   pages fit one screen, so this rarely shows. If it does, swap the body rule
+   for a fixed layer, which iOS does support:
+
+   body::before {
+     content: ""; position: fixed; inset: 0; z-index: -1;
+     background: var(--noa-bg) url("https://YOUR-HOST/noa-tally-backdrop-bottom-1080x2340.png") center top / cover no-repeat;
+   }
+*/
